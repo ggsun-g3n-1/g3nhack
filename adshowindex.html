@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>g3n Hack (1)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --bg-deep: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Scroll Lock implementation */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+            position: fixed; 
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .container {
+            text-align: center;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 50px 40px;
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            max-width: 420px;
+            width: 90%;
+            position: relative;
+            animation: fadeInScale 0.8s ease-out;
+            z-index: 10;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        h2 {
+            margin: 0 0 12px 0;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .btn {
+            position: relative;
+            padding: 18px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            border-radius: 16px;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        #continueBtn {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px -6px var(--primary);
+        }
+
+        #continueBtn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px -6px var(--primary);
+        }
+
+        #generateBtn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            display: none;
+            box-shadow: 0 8px 20px -6px var(--success);
+        }
+
+        #generateBtn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+            box-shadow: 0 12px 25px -6px var(--success);
+        }
+
+        #timer {
+            display: none;
+            padding: 10px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid var(--primary);
+            border-right: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        .wait-text {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        #seconds {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            display: inline-block;
+            min-width: 25px;
+        }
+
+        /* Footer centered and small */
+        footer {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #4b5563;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+  atOptions = {
+    'key' : 'f86f8c3630cfb702ae04ebc55efdcce5',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/f86f8c3630cfb702ae04ebc55efdcce5/invoke.js"></script>
+
+<div class="container">
+    <h2>Start now & Open link</h2>
+    <p>Please verify you are not a idiot to proceed.</p>
+    
+    <button id="continueBtn" class="btn" onclick="startTimer()">Start now</button>
+
+    <div id="timer">
+        <div class="spinner"></div>
+        <div class="wait-text">
+            Processing... <span id="seconds">30</span>s
+        </div>
+    </div>
+
+    <button id="generateBtn" class="btn" onclick="openLink()">Open link</button>
+</div>
+
+<footer>
+    copyright © 2025-2026 ggsun all rights reserved.
+</footer>
+
+<script>
+    function startTimer() {
+        document.getElementById('continueBtn').style.display = 'none';
+        const timerDiv = document.getElementById('timer');
+        const secondsSpan = document.getElementById('seconds');
+        timerDiv.style.display = 'block';
+
+        let timeLeft = 30;
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            secondsSpan.innerText = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerDiv.style.display = 'none';
+                document.getElementById('generateBtn').style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    function openLink() {
+        window.location.href = "https://www.effectivegatecpm.com/r8e93vdkwa?key=5d185ca1a18c587ed386388f1646fe31";
+    }
+    
+    document.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+    }, { passive: false });
+</script>
+
+</body>
+</html>
